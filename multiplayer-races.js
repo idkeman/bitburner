@@ -22,9 +22,17 @@ function ui(){
       <div id="bb-race-content"></div>
     </section>`;
   document.body.appendChild(root);
-  $("bb-race-open").onclick=()=>{$("bb-race-panel").hidden=false};
+  root.addEventListener("keydown",stopTerminalKeyHandling,true);
+  root.addEventListener("keypress",stopTerminalKeyHandling,true);
+  root.addEventListener("keyup",stopTerminalKeyHandling,true);
+  $("bb-race-open").onclick=()=>{$("bb-race-panel").hidden=false; setTimeout(()=>$("bb-email")?.focus(),0)};
   $("bb-race-close").onclick=()=>{$("bb-race-panel").hidden=true};
   render();
+}
+function isRaceInput(target){return !!target?.closest?.("#bb-race-root") && ["INPUT","TEXTAREA","SELECT","BUTTON"].includes(target.tagName);}
+function stopTerminalKeyHandling(event){
+  if(!isRaceInput(event.target)) return;
+  event.stopPropagation();
 }
 function render(){
  const login=$("bb-race-login"), lobby=$("bb-race-lobby"), content=$("bb-race-content");
