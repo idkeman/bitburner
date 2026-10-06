@@ -31,8 +31,13 @@ function render(){
  if(!login)return;
  const logged=window.LoginSystem?.isLoggedIn;
  login.innerHTML=logged
-   ? `<div class="bb-user">Signed in as <b>${esc(window.LoginSystem.profile?.username||window.LoginSystem.user?.email||"Player")}</b></div>`
-   : `<div class="bb-note">Login is required for multiplayer races.</div>`;
+   ? `<div class="bb-user">Signed in as <b>${esc(window.LoginSystem.profile?.username||window.LoginSystem.user?.email||"Player")}</b> <button id="bb-logout">Log out</button></div>`
+   : `<div class="bb-auth"><input id="bb-email" type="email" placeholder="Email"><input id="bb-password" type="password" placeholder="Password"><input id="bb-username" placeholder="Username (for signup)"><button id="bb-login">Log in</button><button id="bb-signup">Create account</button><div id="bb-auth-error" class="bb-note"></div></div>`;
+ if(logged) $("bb-logout")?.addEventListener("click",()=>window.LoginSystem.logout().catch(e=>alert(e.message||e)));
+ else {
+   $("bb-login")?.addEventListener("click",async()=>{try{await window.LoginSystem.login($("bb-email").value,$("bb-password").value)}catch(e){$("bb-auth-error").textContent=e.message||String(e)}});
+   $("bb-signup")?.addEventListener("click",async()=>{try{await window.LoginSystem.signup($("bb-email").value,$("bb-password").value,$("bb-username").value)}catch(e){$("bb-auth-error").textContent=e.message||String(e)}});
+ }
  if(!logged){lobby.innerHTML="";content.innerHTML="";return;}
  if(!state.mp){
    lobby.innerHTML=`<button id="bb-host">Create race room</button><button id="bb-join">Join room</button><button id="bb-public">Browse public rooms</button>`;
